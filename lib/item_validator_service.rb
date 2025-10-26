@@ -6,7 +6,7 @@ require_relative "utils/callable"
 class ItemValidatorService
   include Utils::Callable
 
-  REQUIRED_FIELDS = %w[g:id title description].freeze
+  REQUIRED_FIELDS = %w[g:id title].freeze
 
   class InvalidItemError < StandardError
     attr_reader :missing_fields

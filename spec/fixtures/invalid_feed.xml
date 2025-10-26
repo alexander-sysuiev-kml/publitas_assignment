@@ -3,9 +3,9 @@
   <channel>
     <item>
       <g:id>99</g:id>
-      <title>Invalid item</title>
+      <description>Invalid item</description>
       <link>https://example.com/invalid</link>
-      <!-- intentionally missing description -->
+      <!-- intentionally missing title -->
     </item>
   </channel>
 </rss>

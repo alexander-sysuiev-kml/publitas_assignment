@@ -18,5 +18,5 @@ bundle install
 Run the sample processor against the provided example XML file:
 
 ```sh
-bundle exec ruby bin/assignment.rb feed.xml
+bundle exec ruby bin/assignment.rb resources/feed.xml
 ```
