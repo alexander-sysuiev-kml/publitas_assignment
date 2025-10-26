@@ -9,13 +9,15 @@ class ItemReaderService
   end
 
   def call
+    return enum_for(:call) unless block_given?
+
     File.open(@xml_file_path) do |io|
       reader = Nokogiri::XML::Reader(io)
       reader.each do |node|
         next unless node.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT
         next unless node.name == "item"
 
-        yield Nokogiri::XML(node.outer_xml) if block_given?
+        yield Nokogiri::XML(node.outer_xml)
       end
     end
   end

@@ -14,7 +14,6 @@ RSpec.describe ProcessItemDataService do
   end
 
   describe "#call and #flush" do
-    let(:payloads) { [] }
     let(:expected_payload) do
       [
         {

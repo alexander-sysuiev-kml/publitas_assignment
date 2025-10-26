@@ -15,7 +15,7 @@ class ProcessXmlService
   end
 
   def call
-    load_document
+    process_items
     item_processor.flush
   end
 
@@ -23,7 +23,7 @@ class ProcessXmlService
 
   attr_reader :item_processor
 
-  def load_document
+  def process_items
     ItemReaderService.call(@xml_file_path) do |item_node|
       validated_item = ItemValidatorService.call(item_node)
       item_processor.store_item(validated_item)

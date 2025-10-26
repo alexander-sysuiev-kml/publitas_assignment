@@ -65,6 +65,6 @@ class ProcessItemDataService
   end
 
   def extract_field(item_document, field)
-    item_document.at_xpath("//item/#{field}")&.text&.strip  
+    item_document.at_xpath("//item/#{field}")&.text&.strip
   end
 end
