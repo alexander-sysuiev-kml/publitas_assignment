@@ -41,9 +41,10 @@ bundle exec rspec
 
 - `bin/assignment.rb` — CLI entry point that wires together the processing flow.
 - `lib/process_xml_service.rb` — orchestrates reading, validating, and sending XML items.
-- `lib/process_item_data_service.rb` — batches items and forwards them to `ExternalService`.
+- `lib/process_item_data_service.rb` — batches serialized items and forwards them to `ExternalService`.
 - `lib/item_validator_service.rb` — enforces that each item contains an `id` and `title`; `description` is optional. (according to author assumptions)
 - `lib/item_reader_service.rb` — streams and parses XML input using Nokogiri.
+- `lib/item_serializer_service.rb` — converts XML item nodes to JSON while enforcing payload size limits.
 - `lib/external_service.rb` — stubbed integration point for downstream delivery.
 
 ## Implementation details
