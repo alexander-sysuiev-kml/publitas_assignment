@@ -8,27 +8,21 @@ class ItemSerializerService
 
   class SerializeItemError < StandardError; end
 
-  def initialize(item_document, max_bytes:)
+  def initialize(item_document)
     @item_document = item_document
-    @max_bytes = max_bytes
   end
 
   def call
-    id = extract_field("g:id")
-    data = {
-      "id" => id,
+    {
+      "id" => extract_field("g:id"),
       "title" => extract_field("title"),
       "description" => extract_field("description")
-    }.to_json
-
-    raise SerializeItemError, "Serialized item #{id} exceeds maximum batch size" if data.bytesize > max_bytes
-
-    data
+    }
   end
 
   private
 
-  attr_reader :item_document, :max_bytes
+  attr_reader :item_document
 
   def extract_field(field)
     item_document.at_xpath("//item/#{field}")&.text&.strip

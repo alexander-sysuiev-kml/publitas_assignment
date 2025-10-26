@@ -2,20 +2,23 @@
 
 require_relative "../external/external_service"
 require_relative "item_serializer_service"
+require_relative "item_size_validator_service"
 
 class ProcessItemDataService
   BATCH_SIZE_BYTES = (5 * 1_048_576).to_i
 
   SerializeItemError = ItemSerializerService::SerializeItemError
 
-  def initialize(item_serializer: ItemSerializerService)
+  def initialize
     @external_service = ExternalService.new
-    @item_serializer = item_serializer
     reset_batch
   end
 
   def store_item(item_document)
-    serialized_item = item_serializer.call(item_document, max_bytes: BATCH_SIZE_BYTES)
+    serialized_item = ItemSizeValidatorService.call(
+      ItemSerializerService.call(item_document),
+      max_bytes: BATCH_SIZE_BYTES
+    )
     enqueue(serialized_item)
   end
 
