@@ -3,7 +3,7 @@
 require "nokogiri"
 require_relative "item_reader_service"
 
-class XmlProcessor
+class ProcessXmlService
   ITEM_XPATH = "//rss/channel/item"
 
   def initialize(xml_file_path)

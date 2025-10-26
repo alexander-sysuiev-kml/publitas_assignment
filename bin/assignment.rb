@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require "bundler/setup"
-require_relative "../lib/xml_processor"
+require_relative "../lib/process_xml_service"
 
 def usage
   warn "Usage: bin/process_catalog PATH_TO_XML_FILE"
@@ -13,7 +13,7 @@ usage if ARGV.length != 1
 
 xml_path = ARGV.fetch(0)
 
-processor = XmlProcessor.new(xml_path)
+processor = ProcessXmlService.new(xml_path)
 
 puts "Feed items:"
 processor.call
