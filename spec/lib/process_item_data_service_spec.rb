@@ -14,21 +14,30 @@ RSpec.describe ProcessItemDataService do
   end
 
   describe "#store_item" do
-    let(:serializer) { class_double(ItemSerializerService) }
     let(:item_document) { valid_item_documents.first }
-    let(:serialized_payload) { { id: 1 }.to_json }
+    let(:serialized_hash) do
+      {
+        "id" => "1",
+        "title" => "First item",
+        "description" => "First item description"
+      }
+    end
+    let(:serialized_payload) { serialized_hash.to_json }
 
     before do
-      allow(ItemSerializerService).to receive(:call).and_return(serialized_payload)
+      # Init spy methods
+      allow(ItemSerializerService).to receive(:call).and_call_original
+      allow(ItemSizeValidatorService).to receive(:call).and_call_original
     end
 
-    it "delegates serialization to the injected serializer with the batch size limit" do
+    it "delegates serialization to the serializer and validates payload size" do
       customized_service = described_class.new
 
       customized_service.store_item(item_document)
 
-      expect(ItemSerializerService).to have_received(:call).with(
-        item_document,
+      expect(ItemSerializerService).to have_received(:call).with(item_document)
+      expect(ItemSizeValidatorService).to have_received(:call).with(
+        serialized_hash,
         max_bytes: ProcessItemDataService::BATCH_SIZE_BYTES
       )
     end
