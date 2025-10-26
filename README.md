@@ -53,3 +53,4 @@ bundle exec rspec
 - item_reader_service is responsible for reading and parsing XML streams. For extensibility, it could support different XML formats, but according to the test task requirements and following YAGNI and KISS I kept it simple.
 - I planned to add XSD validation but couldn’t find a suitable XSD file.
 - I decided to not write separate error handler which will just print the error message as to the KISS. So in case different errors will require different handling it will require to init such service.
+- Current implementaion sticks to existing example xml format with namespace for sime fields like `id`, and won't work if change it to `id` without `g` namespace. I decided to not raise code compexity because of this case.
