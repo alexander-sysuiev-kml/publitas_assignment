@@ -31,7 +31,7 @@ RSpec.describe ItemValidatorService do
     it "raises InvalidItemError when required fields are missing" do
       expect { described_class.call(invalid_item_document) }
         .to raise_error(described_class::InvalidItemError) { |error|
-          expect(error.missing_fields).to include("description")
+          expect(error.missing_fields).to contain_exactly("description")
         }
     end
   end

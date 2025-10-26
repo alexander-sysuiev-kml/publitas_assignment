@@ -31,7 +31,6 @@ class ProcessItemDataService
   end
 
   def enqueue(serialized_item)
-    puts serialized_item
     comma_bytes = @batch_items.empty? ? 0 : 1
     projected_size = @payload_size + serialized_item.bytesize + comma_bytes
 

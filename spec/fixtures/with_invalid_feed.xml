@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
+  <channel>
+    <item>
+      <g:id>1</g:id>
+      <title>First item</title>
+      <link>https://example.com/first</link>
+      <description>First item description</description>
+    </item>
+    <item>
+      <g:id>99</g:id>
+      <title>Invalid item</title>
+      <link>https://example.com/invalid</link>
+      <!-- intentionally missing description -->
+    </item>
+    <item>
+      <g:id>2</g:id>
+      <title>Second item</title>
+      <link>https://example.com/second</link>
+      <description>Second item description</description>
+    </item>
+  </channel>
+</rss>
