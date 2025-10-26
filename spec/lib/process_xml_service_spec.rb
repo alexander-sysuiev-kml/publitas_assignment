@@ -11,13 +11,6 @@ RSpec.describe ProcessXmlService do
   let(:item_processor) { instance_double(ProcessItemDataService, store_item: nil, flush: nil) }
   let(:xml_path) { valid_feed_path }
   let(:service) { described_class.new(xml_path) }
-  let(:valid_item_documents) do
-    Nokogiri::XML(File.read(valid_feed_path)).xpath("//item").map { |node| Nokogiri::XML(node.to_xml) }
-  end
-  let(:invalid_item_document) do
-    node = Nokogiri::XML(File.read(invalid_feed_path)).at_xpath("//item")
-    Nokogiri::XML(node.to_xml)
-  end
 
   describe "#call" do
     before do
