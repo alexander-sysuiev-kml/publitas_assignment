@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "json"
-require_relative "utils/callable"
+require_relative "../utils/callable"
 
 class ItemSerializerService
   include Utils::Callable

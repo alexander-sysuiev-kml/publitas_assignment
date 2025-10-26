@@ -3,7 +3,7 @@
 require "json"
 require "nokogiri"
 require "spec_helper"
-require_relative "../../lib/item_serializer_service"
+require_relative "../../lib/services/item_serializer_service"
 
 RSpec.describe ItemSerializerService do
   let(:feed_path) { File.expand_path("../fixtures/sample_feed.xml", __dir__) }

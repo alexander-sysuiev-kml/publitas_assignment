@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require "nokogiri"
-require_relative "item_reader_service"
-require_relative "item_validator_service"
-require_relative "process_item_data_service"
+require_relative "services/item_reader_service"
+require_relative "services/item_validator_service"
+require_relative "services/process_item_data_service"
 require_relative "utils/callable"
 
 class ProcessXmlService
@@ -36,7 +36,7 @@ class ProcessXmlService
     [
       Nokogiri::XML::SyntaxError,
       ItemValidatorService::InvalidItemError,
-      ItemSerializerService::SerializeItemError
+      ProcessItemDataService::SerializeItemError
     ]
   end
 end

@@ -1,19 +1,21 @@
 # frozen_string_literal: true
 
-require_relative "external_service"
+require_relative "../external/external_service"
 require_relative "item_serializer_service"
-require_relative "utils/callable"
 
 class ProcessItemDataService
   BATCH_SIZE_BYTES = (5 * 1_048_576).to_i
 
-  def initialize
+  SerializeItemError = ItemSerializerService::SerializeItemError
+
+  def initialize(item_serializer: ItemSerializerService)
     @external_service = ExternalService.new
+    @item_serializer = item_serializer
     reset_batch
   end
 
   def store_item(item_document)
-    serialized_item = ItemSerializerService.call(item_document, max_bytes: BATCH_SIZE_BYTES)
+    serialized_item = item_serializer.call(item_document, max_bytes: BATCH_SIZE_BYTES)
     enqueue(serialized_item)
   end
 

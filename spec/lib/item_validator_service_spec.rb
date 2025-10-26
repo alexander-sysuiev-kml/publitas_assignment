@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-require_relative "../../lib/item_validator_service"
+require_relative "../../lib/services/item_validator_service"
 
 RSpec.describe ItemValidatorService do
   describe ".call" do

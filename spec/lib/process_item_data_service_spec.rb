@@ -3,7 +3,7 @@
 require "json"
 require "nokogiri"
 require "spec_helper"
-require_relative "../../lib/process_item_data_service"
+require_relative "../../lib/services/process_item_data_service"
 
 RSpec.describe ProcessItemDataService do
   let(:external_service) { instance_double(ExternalService, call: nil) }

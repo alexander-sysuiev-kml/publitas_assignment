@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "nokogiri"
-require_relative "utils/callable"
+require_relative "../utils/callable"
 
 class ItemValidatorService
   include Utils::Callable

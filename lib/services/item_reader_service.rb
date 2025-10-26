@@ -1,5 +1,5 @@
 require "nokogiri"
-require_relative "utils/callable"
+require_relative "../utils/callable"
 
 class ItemReaderService
   include Utils::Callable
