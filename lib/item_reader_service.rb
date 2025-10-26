@@ -1,3 +1,4 @@
+require "nokogiri"
 require_relative "utils/callable"
 
 class ItemReaderService
