@@ -36,7 +36,7 @@ class ProcessXmlService
     [
       Nokogiri::XML::SyntaxError,
       ItemValidatorService::InvalidItemError,
-      ProcessItemDataService::SerializeItemError
+      ItemSerializerService::SerializeItemError
     ]
   end
 end

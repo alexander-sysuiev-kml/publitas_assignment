@@ -13,6 +13,27 @@ RSpec.describe ProcessItemDataService do
     Nokogiri::XML(File.read(valid_feed_path)).xpath("//item")
   end
 
+  describe "#store_item" do
+    let(:serializer) { class_double(ItemSerializerService) }
+    let(:item_document) { valid_item_documents.first }
+    let(:serialized_payload) { { id: 1 }.to_json }
+
+    before do
+      allow(ItemSerializerService).to receive(:call).and_return(serialized_payload)
+    end
+
+    it "delegates serialization to the injected serializer with the batch size limit" do
+      customized_service = described_class.new
+
+      customized_service.store_item(item_document)
+
+      expect(ItemSerializerService).to have_received(:call).with(
+        item_document,
+        max_bytes: ProcessItemDataService::BATCH_SIZE_BYTES
+      )
+    end
+  end
+
   describe "#call and #flush" do
     let(:expected_payload) do
       [
