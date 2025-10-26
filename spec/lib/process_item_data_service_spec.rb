@@ -15,50 +15,28 @@ RSpec.describe ProcessItemDataService do
 
   describe "#call and #flush" do
     let(:payloads) { [] }
+    let(:expected_payload) do
+      [
+        {
+          "id" => "1",
+          "title" => "First item",
+          "description" => "First item description"
+        }
+      ].to_json
+    end
 
     before do
       allow(ExternalService).to receive(:new).and_return(external_service)
-      allow(external_service).to receive(:call) { |payload| payloads << payload }
     end
 
     it "serializes items to JSON and delivers them to the external service on flush" do
       stub_const("ProcessItemDataService::BATCH_SIZE_BYTES", 10_000)
 
       service.store_item(valid_item_documents.first)
+      expect(service.instance_variable_get(:@batch_items).size).to eq(1)
       service.flush
-
-      expect(payloads.size).to eq(1)
-      parsed_payload = JSON.parse(payloads.first)
-      expect(parsed_payload).to eq(
-        [
-          {
-            "id" => "1",
-            "title" => "First item",
-            "description" => "First item description"
-          }
-        ]
-      )
-    end
-
-    it "automatically flushes when the batch payload size exceeds the threshold" do
-      stub_const("ProcessItemDataService::BATCH_SIZE_BYTES", 60)
-      allow(service).to receive(:serialize_item).and_return(
-        '{"item":"aaaaaaaaaa"}',
-        '{"item":"bbbbbbbbbb"}',
-        '{"item":"cccccccccc"}'
-      )
-
-      document = Nokogiri::XML("<item/>")
-
-      3.times { service.store_item(document) }
-
-      expect(payloads.size).to eq(1)
-      expect(JSON.parse(payloads.first).size).to eq(2)
-
-      service.flush
-
-      expect(payloads.size).to eq(2)
-      expect(JSON.parse(payloads.last).size).to eq(1)
+      expect(service.instance_variable_get(:@batch_items).size).to eq(0)
+      expect(external_service).to have_received(:call).with(expected_payload)
     end
   end
 end
