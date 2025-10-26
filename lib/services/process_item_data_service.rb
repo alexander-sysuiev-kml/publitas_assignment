@@ -29,7 +29,7 @@ class ProcessItemDataService
 
   def reset_batch
     @batch_items = []
-    @current_payload_bytes = 2 # accounts for surrounding brackets in JSON array
+    @current_payload_bytes = 2 # for surrounding brackets in JSON array
   end
 
   def enqueue(serialized_item)
@@ -51,7 +51,7 @@ class ProcessItemDataService
   end
 
   def send_if_fits_in_batch(serialized_item)
-    return if calculate_projected_size(serialized_item) <= BATCH_SIZE_BYTES
+    return if calculate_projected_size(serialized_item) < BATCH_SIZE_BYTES
 
     send_batch
   end

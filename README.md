@@ -49,6 +49,7 @@ bundle exec rspec
 
 ## Implementation details
 
-- It would be good to support multiple external services, but following YAGNI, I didn’t add extra parameters.
+- It would be good to support multiple kinds of external services, but following YAGNI, I didn’t add extra parameters.
 - item_reader_service is responsible for reading and parsing XML streams. For extensibility, it could support different XML formats, but according to the test task requirements and following YAGNI and KISS I kept it simple.
 - I planned to add XSD validation but couldn’t find a suitable XSD file.
+- I decided to not write separate error handler which will just print the error message as to the KISS. So in case different errors will require different handling it will require to init such service.
