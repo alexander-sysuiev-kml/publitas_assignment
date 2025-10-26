@@ -33,15 +33,10 @@ class ProcessItemDataService
   end
 
   def enqueue(serialized_item)
-    projected_size = calculate_projected_size(serialized_item)
-
-    unless fits_in_batch?(projected_size)
-      send_batch
-      projected_size = calculate_projected_size(serialized_item)
-    end
+    send_if_fits_in_batch(serialized_item)
 
     @batch_items << serialized_item
-    @current_payload_bytes = projected_size
+    @current_payload_bytes = calculate_projected_size(serialized_item)
   end
 
   def send_batch
@@ -55,7 +50,9 @@ class ProcessItemDataService
     @current_payload_bytes + item_serialized.bytesize + comma_bytes
   end
 
-  def fits_in_batch?(projected_size)
-    projected_size <= BATCH_SIZE_BYTES
+  def send_if_fits_in_batch(serialized_item)
+    return if calculate_projected_size(serialized_item) <= BATCH_SIZE_BYTES
+
+    send_batch
   end
 end
