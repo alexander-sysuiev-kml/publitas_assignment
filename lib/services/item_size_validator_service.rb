@@ -8,17 +8,14 @@ class ItemSizeValidatorService
 
   class SizeItemError < StandardError; end
 
-  def initialize(serialized_item, max_bytes:)
+  def initialize(id, serialized_item, max_bytes:)
+    @id = id
     @serialized_item = serialized_item
     @max_bytes = max_bytes
   end
 
   def call
-    item_data = serialized_item.to_json
-
-    raise SizeItemError, "Item #{serialized_item["id"]} exceeds maximum batch size" if item_data.bytesize > max_bytes
-
-    item_data
+    raise SizeItemError, "Item #{@id} exceeds maximum batch size" if @serialized_item.bytesize > @max_bytes
   end
 
   private

@@ -3,7 +3,7 @@
 require "nokogiri"
 require_relative "../utils/callable"
 
-class ItemValidatorService
+class ItemFieldsValidatorService
   include Utils::Callable
 
   REQUIRED_FIELDS = %w[g:id title].freeze
@@ -23,9 +23,8 @@ class ItemValidatorService
 
   def call
     missing_fields = REQUIRED_FIELDS.reject { |field| field_present?(field) }
-    return item_document if missing_fields.empty?
 
-    raise InvalidItemError, missing_fields
+    raise InvalidItemError, missing_fields unless missing_fields.empty?
   end
 
   private
