@@ -16,4 +16,4 @@ xml_path = ARGV.fetch(0)
 processor = XmlProcessor.new(xml_path)
 
 puts "Feed items:"
-processor.items
+processor.call

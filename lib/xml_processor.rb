@@ -1,34 +1,39 @@
 # frozen_string_literal: true
 
 require "nokogiri"
+require_relative "item_reader_service"
 
 class XmlProcessor
   ITEM_XPATH = "//rss/channel/item"
 
   def initialize(xml_file_path)
-    @document = load_document(xml_file_path)
-    validate!
+    @document = []
+    @xml_file_path = xml_file_path
   end
 
-  # Returns each catalog item.
-  def items
-    @items ||= @document.xpath(ITEM_XPATH).map do |node|
-      puts node
+  def call
+    load_document
+  end
+    
+  private
+
+  def load_document
+    ItemReaderService.call(@xml_file_path) do |item_node|
+      validate_item!(item_node)
+      puts item_node
+      @document << item_node
+    rescue Nokogiri::XML::SyntaxError, ArgumentError => e
+      warn "Skipping invalid item: #{e.message}"
     end
   end
 
-  private
+  def validate_item!(item_node)
+    required_fields = %w[g:id title description]
+    missing_fields = required_fields.reject { |field| item_node.at_xpath("//item/#{field}") }
 
-  def load_document(file_path)
-    raw_xml = File.read(file_path)
+    return if missing_fields.empty?
 
-    Nokogiri::XML(raw_xml) { |config| config.strict.noblanks }
-  rescue Errno::ENOENT => e
-    raise ArgumentError, "Could not read XML from #{file_path}: #{e.message}"
-  end
-
-  def validate!
-    raise "Invalid XML document" unless @document.errors.empty?
+    raise ArgumentError, "Item is missing required fields: #{missing_fields.join(', ')}"
   end
 end
 
