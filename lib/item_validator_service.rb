@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 require "nokogiri"
+require_relative "utils/callable"
 
 class ItemValidatorService
+  include Utils::Callable
+
   REQUIRED_FIELDS = %w[g:id title description].freeze
 
   class InvalidItemError < StandardError
@@ -12,10 +15,6 @@ class ItemValidatorService
       @missing_fields = missing_fields
       super("Item is missing required fields: #{missing_fields.join(', ')}")
     end
-  end
-
-  def self.call(item_document)
-    new(item_document).call
   end
 
   def initialize(item_document)

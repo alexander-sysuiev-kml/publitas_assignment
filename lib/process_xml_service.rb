@@ -3,8 +3,11 @@
 require "nokogiri"
 require_relative "item_reader_service"
 require_relative "item_validator_service"
+require_relative "utils/callable"
 
 class ProcessXmlService
+  include Utils::Callable
+
   def initialize(xml_file_path)
     @document = []
     @xml_file_path = xml_file_path

@@ -1,6 +1,14 @@
+require_relative "utils/callable"
+
 class ItemReaderService
-  def self.call(xml_file_path)
-    File.open(xml_file_path) do |io|
+  include Utils::Callable
+
+  def initialize(xml_file_path)
+    @xml_file_path = xml_file_path
+  end
+
+  def call
+    File.open(@xml_file_path) do |io|
       reader = Nokogiri::XML::Reader(io)
       reader.each do |node|
         next unless node.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT

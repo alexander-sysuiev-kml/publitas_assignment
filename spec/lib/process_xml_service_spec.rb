@@ -26,22 +26,17 @@ RSpec.describe ProcessXmlService do
       expect(service).not_to have_received(:warn)
     end
 
-    it "warns and skips items that are missing required fields" do
-      invalid_item_node = Nokogiri::XML(File.read(invalid_feed_path)).at_xpath("//item")
-      valid_item_document = Nokogiri::XML("<item xmlns:g=\"http://base.google.com/ns/1.0\"><g:id>2</g:id><title>Valid</title><description>Valid</description></item>")
+    context "with invalid items in the feed" do
+      subject(:service) { described_class.new(invalid_feed_path) }
 
-      allow(ItemReaderService)
-        .to receive(:call)
-        .with(valid_feed_path)
-        .and_yield(Nokogiri::XML(invalid_item_node.to_xml))
-        .and_yield(valid_item_document)
+      it "warns and skips items that are missing required fields" do
+        service.call
 
-      service.call
-
-      documents = service.instance_variable_get(:@document)
-      expect(documents.size).to eq(1)
-      expect(service).to have_received(:warn).with(/Skipping invalid item/)
-      expect(service).to have_received(:puts).once
+        documents = service.instance_variable_get(:@document)
+        expect(documents.size).to eq(0)
+        expect(service).to have_received(:warn).with(/Skipping invalid item/).once
+        expect(service).not_to have_received(:puts)
+      end
     end
 
     it "raises an error when the XML file cannot be opened" do

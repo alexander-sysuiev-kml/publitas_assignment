@@ -13,7 +13,5 @@ usage if ARGV.length != 1
 
 xml_path = ARGV.fetch(0)
 
-processor = ProcessXmlService.new(xml_path)
-
 puts "Feed items:"
-processor.call
+ProcessXmlService.call(xml_path)
