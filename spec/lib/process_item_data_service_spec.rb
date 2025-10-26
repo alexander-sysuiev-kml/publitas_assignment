@@ -1,71 +1,45 @@
 # frozen_string_literal: true
 
 require "json"
-require "nokogiri"
 require "spec_helper"
 require_relative "../../lib/services/process_item_data_service"
 
 RSpec.describe ProcessItemDataService do
   let(:external_service) { instance_double(ExternalService, call: nil) }
+  let(:serialized_item) { { "id" => "1", "title" => "First item" }.to_json }
   subject(:service) { described_class.new }
-  let(:valid_feed_path) { File.expand_path("../fixtures/sample_feed.xml", __dir__) }
-  let(:valid_item_documents) do
-    Nokogiri::XML(File.read(valid_feed_path)).xpath("//item")
+
+  before do
+    allow(ExternalService).to receive(:new).and_return(external_service)
   end
 
   describe "#store_item" do
-    let(:item_document) { valid_item_documents.first }
-    let(:serialized_hash) do
-      {
-        "id" => "1",
-        "title" => "First item",
-        "description" => "First item description"
-      }
-    end
-    let(:serialized_payload) { serialized_hash.to_json }
+    it "enqueues the serialized item for batching" do
+      service.store_item(serialized_item)
 
-    before do
-      # Init spy methods
-      allow(ItemSerializerService).to receive(:call).and_call_original
-      allow(ItemSizeValidatorService).to receive(:call).and_call_original
+      expect(service.instance_variable_get(:@batch_items)).to eq([serialized_item])
     end
 
-    it "delegates serialization to the serializer and validates payload size" do
-      customized_service = described_class.new
+    it "flushes the current batch when the next item would exceed the limit" do
+      stub_const("ProcessItemDataService::BATCH_SIZE_BYTES", serialized_item.bytesize + 4)
+      service = described_class.new
 
-      customized_service.store_item(item_document)
+      service.store_item(serialized_item)
+      service.store_item(serialized_item)
 
-      expect(ItemSerializerService).to have_received(:call).with(item_document)
-      expect(ItemSizeValidatorService).to have_received(:call).with(
-        serialized_hash,
-        max_bytes: ProcessItemDataService::BATCH_SIZE_BYTES
-      )
+      expect(external_service).to have_received(:call).with("[#{serialized_item}]")
+      expect(service.instance_variable_get(:@batch_items)).to eq([serialized_item])
     end
   end
 
-  describe "#call and #flush" do
-    let(:expected_payload) do
-      [
-        {
-          "id" => "1",
-          "title" => "First item",
-          "description" => "First item description"
-        }
-      ].to_json
-    end
+  describe "#flush" do
+    it "delivers the accumulated payload to the external service" do
+      service.store_item(serialized_item)
 
-    before do
-      allow(ExternalService).to receive(:new).and_return(external_service)
-    end
-
-    it "serializes items to JSON and delivers them to the external service on flush" do
-      stub_const("ProcessItemDataService::BATCH_SIZE_BYTES", 10_000)
-
-      service.store_item(valid_item_documents.first)
-      expect(service.instance_variable_get(:@batch_items).size).to eq(1)
       service.flush
-      expect(service.instance_variable_get(:@batch_items).size).to eq(0)
-      expect(external_service).to have_received(:call).with(expected_payload)
+
+      expect(service.instance_variable_get(:@batch_items)).to be_empty
+      expect(external_service).to have_received(:call).with("[#{serialized_item}]")
     end
   end
 end

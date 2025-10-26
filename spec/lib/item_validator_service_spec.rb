@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-require_relative "../../lib/services/item_validator_service"
+require_relative "../../lib/services/item_fields_validator_service"
 
-RSpec.describe ItemValidatorService do
+RSpec.describe ItemFieldsValidatorService do
   describe ".call" do
     let(:document) do
       Nokogiri::XML(<<~XML)
@@ -23,9 +23,9 @@ RSpec.describe ItemValidatorService do
       XML
     end
 
-    it "returns the document when all required fields are present" do
+    it "does not raise when all required fields are present" do
       result = described_class.call(document)
-      expect(result).to equal(document)
+      expect(result).to be_nil
     end
 
     it "raises InvalidItemError when required fields are missing" do
