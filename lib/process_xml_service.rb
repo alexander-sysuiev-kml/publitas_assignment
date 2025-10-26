@@ -27,8 +27,16 @@ class ProcessXmlService
     ItemReaderService.call(@xml_file_path) do |item_node|
       validated_item = ItemValidatorService.call(item_node)
       item_processor.store_item(validated_item)
-    rescue Nokogiri::XML::SyntaxError, ItemValidatorService::InvalidItemError => e
+    rescue *expected_errors => e
       warn "Skipping invalid item: #{e.message}"
     end
+  end
+
+  def expected_errors
+    [
+      Nokogiri::XML::SyntaxError,
+      ItemValidatorService::InvalidItemError,
+      ProcessItemDataService::SerializeItemError
+    ]
   end
 end
