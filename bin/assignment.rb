@@ -5,7 +5,7 @@ require "bundler/setup"
 require_relative "../lib/process_xml_service"
 
 def usage
-  warn "Usage: bin/process_catalog PATH_TO_XML_FILE"
+  warn "Usage: bin/assignment.rb PATH_TO_XML_FILE"
   exit 1
 end
 

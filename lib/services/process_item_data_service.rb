@@ -17,7 +17,7 @@ class ProcessItemDataService
   end
 
   def flush
-    send_batch if @batch_items.any?
+    send_batch
   end
 
   private
@@ -37,6 +37,8 @@ class ProcessItemDataService
   end
 
   def send_batch
+    return if @batch_items.empty?
+
     payload = "[#{@batch_items.join(',')}]"
     external_service.call(payload)
     reset_batch
