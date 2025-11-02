@@ -6,8 +6,6 @@ require_relative "../utils/callable"
 class ItemSerializerService
   include Utils::Callable
 
-  class SerializeItemError < StandardError; end
-
   def initialize(item_document)
     @item_document = item_document
   end

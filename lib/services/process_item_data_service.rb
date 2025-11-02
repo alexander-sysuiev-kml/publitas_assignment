@@ -6,8 +6,6 @@ require_relative "item_serializer_service"
 class ProcessItemDataService
   BATCH_SIZE_BYTES = (5 * 1_048_576).to_i
 
-  SerializeItemError = ItemSerializerService::SerializeItemError
-
   def initialize(max_bytes: BATCH_SIZE_BYTES)
     @external_service = ExternalService.new
     @max_bytes = max_bytes
@@ -24,7 +22,7 @@ class ProcessItemDataService
 
   private
 
-  attr_reader :external_service, :item_serializer
+  attr_reader :external_service
 
   def reset_batch
     @batch_items = []
@@ -50,7 +48,7 @@ class ProcessItemDataService
   end
 
   def send_if_fits_in_batch(serialized_item)
-    return if calculate_projected_size(serialized_item) < BATCH_SIZE_BYTES
+    return if calculate_projected_size(serialized_item) < @max_bytes
 
     send_batch
   end
