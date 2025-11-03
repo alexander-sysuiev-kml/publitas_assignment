@@ -51,12 +51,12 @@ bundle exec rspec
 ## Implementation details
 
 - It would be good to support multiple kinds of external services, but following YAGNI, I didn’t add extra parameters.
-- item_reader_service is responsible for reading and parsing XML streams. For extensibility, it could support different XML formats, but according to the test task requirements and following YAGNI and KISS I kept it simple.
+- `ItemReaderService` is responsible for reading and parsing XML streams. For extensibility, it could support different XML formats, but according to the test task requirements and following YAGNI and KISS, I kept it simple.
 - I planned to add XSD validation but couldn’t find a suitable XSD file.
-- I decided to not write separate error handler which will just print the error message as to the KISS. So in case different errors will require different handling it will require to init such service.
-- Current implementaion sticks to existing example xml format with namespace for some fields like `id`, and won't work if change it to `id` without `g` namespace. I decided to not raise code compexity because of this case.
-- There is not pretty code in `process_items` which assigns serialized data, then assigns transformed to JSON data and there is additional id parameter. It is done to keep meaningful error message with `id` and not duplicate `to_json` operation.
-- If single item doesn't fit 5MB size check it is skipped
-- As to feed file analyze there are a lot of records which do not have `description` so I decided to make this feild optional
-- As to my opinion, without title record doesn't make a sense, so I made `title` required despite there are some records without this field
-- If record is not valid it is just skipped and not break the whole logic
+- I decided not to write a separate error handler that would just print the error message, in the spirit of KISS. If different errors require different handling in the future, such a service can be introduced.
+- The current implementation sticks to the existing example XML format with a namespace for some fields like `g:id`, and it won't work if changed to `id` without the `g` namespace. I decided not to increase code complexity because of this case.
+- There is some not so pretty code in `process_items` that assigns serialized data, then assigns the transformed JSON data, and passes an additional `id` parameter. This keeps a meaningful error message with `id` and avoids duplicating the `to_json` operation.
+- If a single item doesn't fit the 5MB size limit, it is skipped.
+- Based on the feed analysis, many records do not have `description`, so I decided to make this field optional.
+- In my opinion, without `title` a record doesn't make sense, so I made `title` required despite some records lacking this field.
+- If a record is not valid, it is skipped and does not break the overall process.
