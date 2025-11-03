@@ -55,4 +55,8 @@ bundle exec rspec
 - I planned to add XSD validation but couldn’t find a suitable XSD file.
 - I decided to not write separate error handler which will just print the error message as to the KISS. So in case different errors will require different handling it will require to init such service.
 - Current implementaion sticks to existing example xml format with namespace for some fields like `id`, and won't work if change it to `id` without `g` namespace. I decided to not raise code compexity because of this case.
-- There is not pretty code which assigns serialized data, then assigns transformed to JSON data and there is additional id parameter. It is done to keep meaningful error message with `id` and not duplicate `to_json` operation.
+- There is not pretty code in `process_items` which assigns serialized data, then assigns transformed to JSON data and there is additional id parameter. It is done to keep meaningful error message with `id` and not duplicate `to_json` operation.
+- If single item doesn't fit 5MB size check it is skipped
+- As to feed file analyze there are a lot of records which do not have `description` so I decided to make this feild optional
+- As to my opinion, without title record doesn't make a sense, so I made `title` required despite there are some records without this field
+- If record is not valid it is just skipped and not break the whole logic
