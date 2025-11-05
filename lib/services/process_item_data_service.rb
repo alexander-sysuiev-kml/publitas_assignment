@@ -31,8 +31,6 @@ class ProcessItemDataService
   end
 
   def enqueue(serialized_item)
-    return if serialized_item.bytesize + BRACKET_BYTES > @max_bytes
-
     send_if_fits_in_batch(serialized_item)
 
     @batch_items << serialized_item
