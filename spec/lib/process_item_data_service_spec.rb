@@ -14,6 +14,17 @@ RSpec.describe ProcessItemDataService do
   end
 
   describe "#store_item" do
+    it "skips items that exceed the maximum payload size" do
+      max_bytes = serialized_item.bytesize + described_class::BRACKET_BYTES - 1
+      service = described_class.new(max_bytes: max_bytes)
+
+      service.store_item(serialized_item)
+
+      expect(service.instance_variable_get(:@batch_items)).to be_empty
+      expect(service.instance_variable_get(:@current_payload_bytes)).to eq(described_class::BRACKET_BYTES)
+      expect(external_service).not_to have_received(:call)
+    end
+
     it "enqueues the serialized item for batching" do
       service.store_item(serialized_item)
 
