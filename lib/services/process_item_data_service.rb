@@ -5,6 +5,7 @@ require_relative "item_serializer_service"
 
 class ProcessItemDataService
   BATCH_SIZE_BYTES = (5 * 1_048_576).to_i
+  BRACKET_BYTES = 2
 
   def initialize(max_bytes: BATCH_SIZE_BYTES)
     @external_service = ExternalService.new
@@ -26,10 +27,12 @@ class ProcessItemDataService
 
   def reset_batch
     @batch_items = []
-    @current_payload_bytes = 2 # for surrounding brackets in JSON array
+    @current_payload_bytes = BRACKET_BYTES
   end
 
   def enqueue(serialized_item)
+    return if serialized_item.bytesize + BRACKET_BYTES > @max_bytes
+
     send_if_fits_in_batch(serialized_item)
 
     @batch_items << serialized_item
